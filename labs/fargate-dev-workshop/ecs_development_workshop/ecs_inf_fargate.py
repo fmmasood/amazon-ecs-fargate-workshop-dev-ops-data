@@ -2,6 +2,8 @@
 
 from ecs_development_workshop.code_pipeline_configuration import ContainerPipelineConfiguration
 
+from constructs import Construct
+
 from aws_cdk import (
     aws_ecs as ecs,
     aws_ec2 as ec2,
@@ -13,15 +15,16 @@ from aws_cdk import (
     aws_cloudwatch,
     aws_elasticloadbalancingv2_targets as elbvs_targets,
     aws_logs as logs,
-    core
+    App, Stack, Duration, CfnOutput, RemovalPolicy
+    
 )
 
 import json
 from django.http import JsonResponse
 
-class EcsInfFargate(core.Stack):
+class EcsInfFargate(Stack):
     
-    def __init__(self, scope: core.Construct, id: str, config: ContainerPipelineConfiguration, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, config: ContainerPipelineConfiguration, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
         
         #VPC
@@ -69,7 +72,7 @@ class EcsInfFargate(core.Stack):
         
         log_group = logs.LogGroup(self, "log_group",
             log_group_name= config.ProjectName + "-" + config.stage, 
-            removal_policy=core.RemovalPolicy.DESTROY, 
+            removal_policy=RemovalPolicy.DESTROY, 
             retention=None
         )
         
@@ -91,11 +94,12 @@ class EcsInfFargate(core.Stack):
         
         container.add_port_mappings(ecs.PortMapping(container_port=80, host_port=80, protocol = ecs.Protocol.TCP))
         
+        security_groups_list = []
         #ECS Fargate Service
         fargate_service = ecs.FargateService(
             scope = self, 
             id = "fargate_service",
-            security_group = service_sg,
+            security_groups = security_groups_list.append(service_sg),
             cluster=cluster,
             desired_count=5,
             deployment_controller = ecs.DeploymentController(type = ecs.DeploymentControllerType.CODE_DEPLOY),
@@ -106,18 +110,18 @@ class EcsInfFargate(core.Stack):
         #Main Env
         listern_health_check_main = elbv2.HealthCheck(
             healthy_http_codes = '200',
-            interval = core.Duration.seconds(5),
+            interval = Duration.seconds(5),
             healthy_threshold_count = 2,
             unhealthy_threshold_count = 3,
-            timeout = core.Duration.seconds(4)
+            timeout = Duration.seconds(4)
         )
         #Test Env
         listern_health_check_test = elbv2.HealthCheck(
             healthy_http_codes = '200',
-            interval = core.Duration.seconds(5),
+            interval = Duration.seconds(5),
             healthy_threshold_count = 2,
             unhealthy_threshold_count = 3,
-            timeout = core.Duration.seconds(4)
+            timeout = Duration.seconds(4)
         )
         
         listener_main = load_balancer.add_listener("load_balancer_listener_1", 
@@ -142,33 +146,29 @@ class EcsInfFargate(core.Stack):
         aws_cloudwatch.Alarm(self,"TargetGroup5xx",
             metric = listern_main_targets.metric_http_code_target(elbv2.HttpCodeTarget.TARGET_5XX_COUNT),
             threshold = 1,
-            evaluation_periods = 1,
-            period = core.Duration.minutes(1)
+            evaluation_periods = 1
         )
         
         aws_cloudwatch.Alarm(self,"TargetGroup25xx",
             metric = listern_test_targets.metric_http_code_target(elbv2.HttpCodeTarget.TARGET_5XX_COUNT),
             threshold = 1,
-            evaluation_periods = 1,
-            period = core.Duration.minutes(1)       
+            evaluation_periods = 1
         )
         
         #Alarms: monitor unhealthy hosts on target group
         aws_cloudwatch.Alarm(self,"TargetGroupUnhealthyHosts",
             metric = listern_main_targets.metric('UnHealthyHostCount'),
             threshold = 1,
-            evaluation_periods = 1,
-            period = core.Duration.minutes(1)        
+            evaluation_periods = 1
         )
         
         aws_cloudwatch.Alarm(self,"TargetGroup2UnhealthyHosts",
             metric = listern_test_targets.metric('UnHealthyHostCount'),
             threshold = 1,
-            evaluation_periods = 1,
-            period = core.Duration.minutes(1)        
+            evaluation_periods = 1
         )
 
-        core.CfnOutput(self,"lburl",
+        CfnOutput(self,"lburl",
             value = load_balancer.load_balancer_dns_name,
             export_name = "LoadBalancerUrl"
         )

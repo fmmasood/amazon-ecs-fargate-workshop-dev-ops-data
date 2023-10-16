@@ -2,6 +2,8 @@
 
 from ecs_development_workshop.code_pipeline_configuration import ContainerPipelineConfiguration
 #from ecs_development_workshop.code_pipeline_generic_build_project import genericBuild
+from constructs import Construct
+
 from aws_cdk import (
     aws_codebuild,
     aws_iam as iam,
@@ -17,15 +19,16 @@ from aws_cdk import (
     aws_events_targets as targets,
     aws_elasticloadbalancingv2 as elbv2,
     aws_cloudwatch as cloudwatch,
-    core,
+    App, Stack, Duration, CfnOutput, RemovalPolicy
+
 )
 
-class DockerBuildToEcrPipeline(core.Stack):
+class DockerBuildToEcrPipeline(Stack):
 
 #    def __init__(self, scope: core.Construct, id: str, cluster: ecs.Cluster, asg_1: autoscaling.IAutoScalingGroup, asg_2: autoscaling.IAutoScalingGroup, lb: elbv2.IApplicationLoadBalancer, config: ContainerPipelineConfiguration, **kwargs) -> None:
 #        super().__init__(scope, id, **kwargs)
 #
-    def __init__(self, scope: core.Construct, id: str, config: ContainerPipelineConfiguration, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, config: ContainerPipelineConfiguration, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
         
         sourceOutput = codepipeline.Artifact(
@@ -53,7 +56,7 @@ class DockerBuildToEcrPipeline(core.Stack):
         self.docker_repo = ecr.Repository(
                 scope = self, 
                 id = config.ProjectName,
-                removal_policy=core.RemovalPolicy.DESTROY,
+                removal_policy=RemovalPolicy.DESTROY,
                 repository_name = config.ProjectName
         )
         
@@ -76,7 +79,8 @@ class DockerBuildToEcrPipeline(core.Stack):
             build_spec=aws_codebuild.BuildSpec.from_source_filename(
                 filename='configs/buildspec_lint.yml'),
             environment=aws_codebuild.BuildEnvironment(
-                build_image=aws_codebuild.LinuxBuildImage.UBUNTU_14_04_NODEJS_10_1_0,
+                #build_image=aws_codebuild.LinuxBuildImage.UBUNTU_14_04_NODEJS_10_1_0,
+                build_image=aws_codebuild.LinuxBuildImage.STANDARD_5_0,
                 privileged=True,
             ),
             # pass the ecr repo uri into the codebuild project so codebuild knows where to push
@@ -87,7 +91,7 @@ class DockerBuildToEcrPipeline(core.Stack):
                     value=config.ProjectName)
             },
             description='linting the container dockerfile for best practices',
-            timeout=core.Duration.minutes(60),
+            timeout=Duration.minutes(60),
         )
         
 
@@ -99,6 +103,8 @@ class DockerBuildToEcrPipeline(core.Stack):
                 filename='configs/buildspec_secrets.yml'),
             environment=aws_codebuild.BuildEnvironment(
                 privileged=True,
+                build_image=aws_codebuild.LinuxBuildImage.STANDARD_5_0
+
             ),
             # pass the ecr repo uri into the codebuild project so codebuild knows where to push
             environment_variables={
@@ -110,7 +116,7 @@ class DockerBuildToEcrPipeline(core.Stack):
                     value=config.ProjectName)
             },
             description='Scanning container for secrets',
-            timeout=core.Duration.minutes(60),
+            timeout=Duration.minutes(60),
         )
         
         cb_docker_build_secretscan.add_to_role_policy(
@@ -128,6 +134,7 @@ class DockerBuildToEcrPipeline(core.Stack):
                 filename='configs/docker_build_base.yml'),
             environment=aws_codebuild.BuildEnvironment(
                 privileged=True,
+                build_image=aws_codebuild.LinuxBuildImage.STANDARD_5_0
             ),
             # pass the ecr repo uri into the codebuild project so codebuild knows where to push
             environment_variables={
@@ -139,7 +146,7 @@ class DockerBuildToEcrPipeline(core.Stack):
                     value=config.ProjectName)
             },
             description='Deploy to ECR',
-            timeout=core.Duration.minutes(60),
+            timeout=Duration.minutes(60),
         )
         
         pipeline.add_stage(

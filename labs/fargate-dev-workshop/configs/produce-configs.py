@@ -24,10 +24,10 @@ image = sys.argv[3]
 stack_name = stack_prefix + app_env
 
 account_number = boto3.client('sts').get_caller_identity().get('Account')
-region = boto3.client('sts').get_caller_identity().get('Region')
+region = 'ap-southeast-2'
 
 # create a boto3 client first
-cloudformation = boto3.client('cloudformation', region_name='us-west-2')
+cloudformation = boto3.client('cloudformation', region_name='ap-southeast-2')
 
 inf_stack = cloudformation.describe_stack_resources(
     StackName=stack_name

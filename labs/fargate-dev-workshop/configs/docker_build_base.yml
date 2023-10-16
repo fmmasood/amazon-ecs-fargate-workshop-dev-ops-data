@@ -2,16 +2,18 @@ version: 0.2
 phases:
   install:
     commands:
+      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
       - apt-get update
       - apt-get install -y jq
   pre_build:
     commands:
       - echo 'starting build...'
       - export IMAGE_TAG=`echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}'`
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - export ACCOUNT_ID=`aws sts get-caller-identity --query 'Account' --output text`
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   build:
     commands:
       #build docker image
-      - docker build -t $project_name:$tag .
-      - docker tag $project_name:$tag $ecr:$tag
-      - docker push $ecr
+      - docker build -t $project_name:$IMAGE_TAG .
+      - docker tag $project_name:$IMAGE_TAG $ecr:$IMAGE_TAG
+      - docker push $ecr:$IMAGE_TAG

@@ -2,14 +2,16 @@
 
 #!/usr/bin/env python3
 
-from aws_cdk import core
 import os
+
+import aws_cdk as cdk
+
 
 from ecs_development_workshop.docker_build_to_ecr_pipeline import DockerBuildToEcrPipeline
 from ecs_development_workshop.code_pipeline_configuration import ContainerPipelineConfiguration
 from ecs_development_workshop.ecs_inf_fargate import EcsInfFargate
 
-app = core.App()
+app = cdk.App()
 
 #BootStrap Developer Pipeline
 developerPipelineTest = ContainerPipelineConfiguration(
