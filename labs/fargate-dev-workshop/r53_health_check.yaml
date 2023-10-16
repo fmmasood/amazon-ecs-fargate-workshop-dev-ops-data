@@ -7,7 +7,7 @@ Parameters:
 
 Resources:
   cloudfronthealth1: 
-    Type: 'AWS::Route53::HealthCheck'
+    Type: AWS::Route53::HealthCheck
     Properties: 
       HealthCheckConfig: 
         Port: 80
@@ -22,7 +22,7 @@ Resources:
         Value: cloudfronthealth1
 
   cloudfronthealth2: 
-    Type: 'AWS::Route53::HealthCheck'
+    Type: AWS::Route53::HealthCheck
     Properties: 
       HealthCheckConfig: 
         Port: 80
@@ -37,7 +37,7 @@ Resources:
         Value: cloudfronthealth2
         
   cloudfronthealth3: 
-    Type: 'AWS::Route53::HealthCheck'
+    Type: AWS::Route53::HealthCheck
     Properties: 
       HealthCheckConfig: 
         Port: 80
@@ -52,7 +52,7 @@ Resources:
         Value: cloudfronthealth3
         
   cloudfronthealth4: 
-    Type: 'AWS::Route53::HealthCheck'
+    Type: AWS::Route53::HealthCheck
     Properties: 
       HealthCheckConfig: 
         Port: 80
@@ -67,7 +67,7 @@ Resources:
         Value: cloudfronthealth4
 
   cloudfronthealth5: 
-    Type: 'AWS::Route53::HealthCheck'
+    Type: AWS::Route53::HealthCheck
     Properties: 
       HealthCheckConfig: 
         Port: 80
@@ -82,7 +82,7 @@ Resources:
         Value: cloudfronthealth5
         
   cloudfronthealth6s: 
-    Type: 'AWS::Route53::HealthCheck'
+    Type: AWS::Route53::HealthCheck
     Properties: 
       HealthCheckConfig: 
         Port: 80

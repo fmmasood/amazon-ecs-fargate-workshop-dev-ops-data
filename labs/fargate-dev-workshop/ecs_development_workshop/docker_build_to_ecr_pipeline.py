@@ -7,19 +7,11 @@ from constructs import Construct
 from aws_cdk import (
     aws_codebuild,
     aws_iam as iam,
-    aws_ecs as ecs,
     aws_codecommit,
-    aws_codedeploy,
     aws_codepipeline as codepipeline,
     aws_codepipeline_actions as codepipeline_actions,
     aws_ecr as ecr,
-    aws_events as events,
-    aws_lambda as lambda_,
-    aws_autoscaling as autoscaling,
-    aws_events_targets as targets,
-    aws_elasticloadbalancingv2 as elbv2,
-    aws_cloudwatch as cloudwatch,
-    App, Stack, Duration, CfnOutput, RemovalPolicy
+    Stack, Duration, RemovalPolicy
 
 )
 

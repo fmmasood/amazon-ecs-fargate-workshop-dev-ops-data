@@ -10,12 +10,9 @@ from aws_cdk import (
     aws_iam as iam,
     aws_ecr as ecr,
     aws_elasticloadbalancingv2 as elbv2,
-    aws_ecs_patterns,
-    aws_autoscaling as autoscaling,
     aws_cloudwatch,
-    aws_elasticloadbalancingv2_targets as elbvs_targets,
     aws_logs as logs,
-    App, Stack, Duration, CfnOutput, RemovalPolicy
+    Stack, Duration, CfnOutput, RemovalPolicy
     
 )
 
@@ -101,7 +98,7 @@ class EcsInfFargate(Stack):
             id = "fargate_service",
             security_groups = security_groups_list.append(service_sg),
             cluster=cluster,
-            desired_count=5,
+            desired_count=2,
             deployment_controller = ecs.DeploymentController(type = ecs.DeploymentControllerType.CODE_DEPLOY),
             task_definition = fargate_task_definition,
             service_name = config.ProjectName + "-" + config.stage
