@@ -4,14 +4,15 @@ from aws_cdk import (
     aws_ec2 as ec2,
     aws_ecs as ecs,
     aws_iam as iam,
-    core
+    App, Stack, Duration, CfnOutput, RemovalPolicy
+
 )
 from typing import List
 
 
-class FargateWorkshopOpsStack(core.Stack):
+class FargateWorkshopOpsStack(Stack):
 
-    def __init__(self, scope: core.Stack, id=str, **kwargs):
+    def __init__(self, scope: Stack, id=str, **kwargs):
         super().__init__(scope, id, **kwargs)
 
         self.vpc = ec2.Vpc(

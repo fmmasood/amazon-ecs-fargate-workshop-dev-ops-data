@@ -2,7 +2,7 @@
 
 #!/usr/bin/env python3
 
-from aws_cdk import core
+from aws_cdk import App
 import os
 
 from fargate_ops_cdk.fargate_workshop_ops_stack import *
@@ -12,7 +12,7 @@ from fargate_ops_cdk.fargate_workshop_ops_node_backend import *
 from fargate_ops_cdk.fargate_workshop_ops_crystal_backend import *
 from fargate_ops_cdk.fargate_workshop_ops_failed import *
 
-class FargateDemo(core.App):
+class FargateDemo(App):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

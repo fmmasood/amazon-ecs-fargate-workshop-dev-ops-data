@@ -5,12 +5,13 @@ from aws_cdk import (
     aws_ec2 as ec2,
     aws_logs as logs,
     aws_ecs_patterns as ecs_patterns,
-    core
+    App, Stack, Duration, CfnOutput, RemovalPolicy
+
 )
 
-class FargateWorkshopOpsNodeBackend(core.Stack):
+class FargateWorkshopOpsNodeBackend(Stack):
 
-    def __init__(self, scope: core.Stack, id: str, cluster: ecs.ICluster, vpc, private_subnets, sec_group, desired_service_count, **kwargs):
+    def __init__(self, scope: Stack, id: str, cluster: ecs.ICluster, vpc, private_subnets, sec_group, desired_service_count, **kwargs):
         super().__init__(scope, id, **kwargs)
         self.cluster = cluster
         self.vpc = vpc
@@ -41,6 +42,7 @@ class FargateWorkshopOpsNodeBackend(core.Stack):
             )
         )
 
+        sgs= []
         self.fargate_service = ecs.FargateService(
             self, "BackendNodeFargateService",
             service_name="Fargate-Backend-NodeJS",
@@ -49,10 +51,10 @@ class FargateWorkshopOpsNodeBackend(core.Stack):
             max_healthy_percent=100,
             min_healthy_percent=0,
             vpc_subnets={
-            "subnet_name" : "Private"
+                "subnet_type" : ec2.SubnetType.PRIVATE_WITH_EGRESS
             },
             desired_count=self.desired_service_count,
-            security_group=self.sec_group,
+            security_groups=sgs.append(self.sec_group),
             cloud_map_options={
                 "name": "ecsdemo-nodejs"
             },

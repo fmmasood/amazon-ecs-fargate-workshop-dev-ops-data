@@ -4,13 +4,14 @@ from aws_cdk import (
     aws_ecs as ecs,
     aws_ec2 as ec2,
     aws_ecs_patterns as ecs_patterns,
-    core
+    App, Stack, Duration, CfnOutput, RemovalPolicy
+
 )
 
 
-class FargateWorkshopOpsFrontend(core.Stack):
+class FargateWorkshopOpsFrontend(Stack):
 
-    def __init__(self, scope: core.Stack, id: str, cluster: ecs.ICluster, vpc, sec_group, desired_service_count, **kwargs):
+    def __init__(self, scope: Stack, id: str, cluster: ecs.ICluster, vpc, sec_group, desired_service_count, **kwargs):
         super().__init__(scope, id, **kwargs)
         self.cluster = cluster
         self.vpc = vpc
@@ -66,11 +67,11 @@ class FargateWorkshopOpsFrontend(core.Stack):
         scaling.scale_on_cpu_utilization(
             "CpuScaling",
             target_utilization_percent=30,
-            scale_in_cooldown=core.Duration.seconds(60),
-            scale_out_cooldown=core.Duration.seconds(60),
+            scale_in_cooldown=Duration.seconds(60),
+            scale_out_cooldown=Duration.seconds(60),
         )
 
-        core.CfnOutput(
+        CfnOutput(
             self, "LoadBalancerDNS",
             value = self.fargate_load_balanced_service.load_balancer.load_balancer_dns_name
         )
