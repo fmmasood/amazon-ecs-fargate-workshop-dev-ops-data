@@ -49,7 +49,9 @@ class EcsInfFargate(Stack):
             scope = self,
             id = "ecs-cluster",
             cluster_name = config.ProjectName + "-" + config.stage,
-            vpc = vpc
+            vpc = vpc,
+            containerInsights = True
+
         )
 
         load_balancer = elbv2.ApplicationLoadBalancer(

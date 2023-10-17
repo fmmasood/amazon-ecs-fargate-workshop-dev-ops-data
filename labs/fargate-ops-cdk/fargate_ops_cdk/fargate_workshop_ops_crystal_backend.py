@@ -43,7 +43,7 @@ class FargateWorkshopOpsCrystalBackend(Stack):
             max_healthy_percent=100,
             min_healthy_percent=0,
             vpc_subnets={
-                "subnet_type" : ec2.SubnetType.PRIVATE_WITH_NAT
+                "subnet_type" : ec2.SubnetType.PRIVATE_WITH_EGRESS
             },
             desired_count=self.desired_service_count,
             cloud_map_options={
