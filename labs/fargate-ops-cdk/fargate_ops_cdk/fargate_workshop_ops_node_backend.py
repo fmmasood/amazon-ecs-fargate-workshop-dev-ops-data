@@ -42,7 +42,15 @@ class FargateWorkshopOpsNodeBackend(Stack):
             )
         )
 
-        sgs= []
+        self.sec_grp_ingress_self_3000 = ec2.CfnSecurityGroupIngress(
+            self, "InboundFrontendToNodeBackend",
+            ip_protocol='TCP',
+            cidr_ip=self.vpc.vpc_cidr_block,
+            from_port=3000,
+            to_port=3000,
+            group_id=self.sec_group.security_group_id
+        )
+        
         self.fargate_service = ecs.FargateService(
             self, "BackendNodeFargateService",
             service_name="Fargate-Backend-NodeJS",
@@ -54,7 +62,7 @@ class FargateWorkshopOpsNodeBackend(Stack):
                 "subnet_type" : ec2.SubnetType.PRIVATE_WITH_EGRESS
             },
             desired_count=self.desired_service_count,
-            security_groups=sgs.append(self.sec_group),
+            security_groups=[self.sec_group],
             cloud_map_options={
                 "name": "ecsdemo-nodejs"
             },

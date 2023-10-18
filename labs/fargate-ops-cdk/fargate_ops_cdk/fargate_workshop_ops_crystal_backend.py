@@ -34,7 +34,15 @@ class FargateWorkshopOpsCrystalBackend(Stack):
             logging=ecs.AwsLogDriver(stream_prefix="ecsdemo-crystal", log_retention=logs.RetentionDays.THREE_DAYS),
         )
 
-        sgs= []
+        self.sec_grp_ingress_self_3000 = ec2.CfnSecurityGroupIngress(
+            self, "InboundFrontendToCrystalBackend",
+            ip_protocol='TCP',
+            cidr_ip=self.vpc.vpc_cidr_block,
+            from_port=3000,
+            to_port=3000,
+            group_id=self.sec_group.security_group_id
+        )
+        
         self.fargate_service = ecs.FargateService(
             self, "BackendCrystalFargateService",
             service_name="Fargate-Backend-Crystal",
@@ -49,5 +57,5 @@ class FargateWorkshopOpsCrystalBackend(Stack):
             cloud_map_options={
                 "name": "ecsdemo-crystal"
             },
-            security_groups=sgs.append(self.sec_group),
+            security_groups=[self.sec_group]
         )
