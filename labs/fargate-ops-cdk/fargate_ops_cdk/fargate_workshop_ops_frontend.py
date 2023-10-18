@@ -30,8 +30,8 @@ class FargateWorkshopOpsFrontend(Stack):
                 "container_port": 3000,
                 "enable_logging": True,
                 "environment":  {
-                "CRYSTAL_URL": "http://ecsdemo-crystal.service:3000/crystal",
-                "NODEJS_URL": "http://ecsdemo-nodejs.service:3000"
+                  "CRYSTAL_URL": "http://ecsdemo-crystal.service:3000/crystal",
+                  "NODEJS_URL": "http://ecsdemo-nodejs.service:3000"
                 }
             },
          )
