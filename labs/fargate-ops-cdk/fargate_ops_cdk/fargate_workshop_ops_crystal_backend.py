@@ -30,7 +30,7 @@ class FargateWorkshopOpsCrystalBackend(Stack):
 
         self.task_definition.add_container(
             "BackendCrystalServiceContainer",
-            image=ecs.ContainerImage.from_registry("adam9098/ecsdemo-crystal"),
+            image=ecs.ContainerImage.from_registry("brentley/ecsdemo-crystal"),
             logging=ecs.AwsLogDriver(stream_prefix="ecsdemo-crystal", log_retention=logs.RetentionDays.THREE_DAYS),
         )
 

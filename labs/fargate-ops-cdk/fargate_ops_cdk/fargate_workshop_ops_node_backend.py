@@ -34,7 +34,7 @@ class FargateWorkshopOpsNodeBackend(Stack):
                 options={
                     "Name": "cloudwatch",
                     "log_key": "log",
-                    "region": "us-west-2",
+                    "region": "ap-southeast-2",
                     "delivery_stream": "my-stream",
                     "log_group_name": "firelens-fluent-bit",
                     "auto_create_group": "true",

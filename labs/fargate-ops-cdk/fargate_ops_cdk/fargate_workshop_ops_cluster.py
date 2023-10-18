@@ -21,12 +21,15 @@ class FargateWorkshopOpsCluster(Stack):
                 scope = self,
                 id = 'OpsCluster',
                 vpc = vpc,
-                containerInsights = True
+                container_insights = True
         )
         # Adding service discovery namespace to cluster
         self.cluster.add_default_cloud_map_namespace(
             name="service",
         )
+
+
+
 
 
 

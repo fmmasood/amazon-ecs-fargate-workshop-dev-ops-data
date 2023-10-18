@@ -50,7 +50,7 @@ class EcsInfFargate(Stack):
             id = "ecs-cluster",
             cluster_name = config.ProjectName + "-" + config.stage,
             vpc = vpc,
-            containerInsights = True
+            container_insights = True
 
         )
 
